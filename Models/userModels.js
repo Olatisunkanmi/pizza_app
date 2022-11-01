@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
+var LocalStrategy = require('passport-local');
 
 const UserSchema = new Schema(
 	{
@@ -50,6 +52,13 @@ UserSchema.methods.checkPassword = async (
 	userPassword,
 ) => {
 	return await bcrypt.compare(THISPASSWORD, userPassword);
+};
+
+UserSchema.methods.checkPassword = async () => {
+	return await passport.authenticate('local', {
+		failureRedirect: '/',
+		failureMessage: 'User Credentials wrong',
+	});
 };
 
 module.exports = mongoose.model('User', UserSchema);
