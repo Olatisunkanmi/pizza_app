@@ -8,6 +8,15 @@ const errController = require('./controllers/errController');
 const app = express();
 app.use(express.json());
 app.use(morgan('common'));
+const passport = require('passport');
+
+app.post(
+	'/login',
+	passport.authenticate('local', { failureRedirect: '/' }),
+	(req, res) => {
+		res.redirect('/books');
+	},
+);
 
 app.use('/api/orders', ORDERROUTES);
 app.use('/api/users', USERROUTES);
