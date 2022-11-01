@@ -1,11 +1,9 @@
 const Users = require('../Models/userModels');
-const router = require('express').Router();
 const AppError = require('../utils/AppError');
 const ResponseHandler = require('../utils/responseHandler');
 const Catch_Async = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
-const { findById } = require('../Models/userModels');
 // global user variable
 // !be careful
 let user;
@@ -39,8 +37,12 @@ exports.Login = Catch_Async(async (req, res, next) => {
 		);
 	user = await Users.findOne({ email }).select('password');
 
-	if (!user || !(await user.checkPassword(password, user.password))) {
-		return next(new AppError('Login attempt failed', 400));
+	// if (!user || !(await user.checkPassword(password, user.password))) {
+	// 	return next(new AppError('Wrong Credentials', 400));
+	// }
+
+	if (!user || !(await user.checkPassword())) {
+		return next(new AppError('Wrong Credentials', 400));
 	}
 
 	const TOKEN = await SIGNTOKEN(user._id);
